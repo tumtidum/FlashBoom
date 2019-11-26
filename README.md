@@ -4,9 +4,8 @@
 Estimate the distance of lightning by measuring the time between the 'flash'
 and the 'boom' during a thunderstorm *(or any other event you can see before
 you can hear because of the distance).*
-
-For increased accuracy, the air temperature can also be set in order to fine-
-tune the *speed of sound* to the conditions.
+For increased accuracy, the air temperature can also be set in order to
+fine-tune the *speed of sound* to the conditions.
 
 ![](img/header.png)
 
@@ -47,8 +46,9 @@ The *Reset* button clears the display and the history box. It will also stop
 the timer if it was running.
 
 To increase the accuracy, the air temperature can be set as well (°Celcius).
-Do this by hovering the mouse-pointer over the spinbox and turning the mouse-
-wheel. (On Linux the entire spinbox may be greyed out, it still works though.)
+Do this by hovering the mouse-pointer over the spinbox and turning the
+mouse-wheel. (On Linux the entire spinbox may be greyed out, it still works
+though.)
 
 ## Release History
 
