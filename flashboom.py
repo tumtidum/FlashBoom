@@ -1,4 +1,4 @@
-"""flASh!..bOOm! v0.0.1 - Python 3.7 - by tumtidum.
+"""flASh!..bOOm! v0.0.2 - Python 3.7 - by tumtidum.
 
 Estimate the distance of lightning by measuring the time between
 the 'flash' and the 'boom' during a thunderstorm (or any other
@@ -11,7 +11,6 @@ order to fine-tune the speed of sound to the conditions.
 
 from tkinter import (ttk, Tk, Frame, N, W, E, S, StringVar, BitmapImage,
                      Listbox)
-from tkinter.font import Font
 from time import perf_counter
 from math import sqrt
 
@@ -26,18 +25,21 @@ class App(Frame):
         # Will be used for timing.
         time_start = 0
 
-        # Used for feedback label.
-        default_text = ". . ."
-        V = StringVar()
-        V.set(default_text)
+        # Used for display/feedback labels.
+        default_d_text = ". . ."
+        display_d_var = StringVar()
+        display_d_var.set(default_d_text)
+        default_t_text = ". ."
+        display_t_var = StringVar()
+        display_t_var.set(default_t_text)
 
         # Used for history box.
         history_list = []
         hist_compare_list = []
         history_var = StringVar()
-        history_var.set(value=history_list)
+        history_var.set(history_list)
 
-        # Definitions used by the buttons.
+        # Function definitions.
         def flasher():
             """Actions for the flash button."""
             nonlocal time_start
@@ -45,24 +47,25 @@ class App(Frame):
             boom_button['state'] = 'normal'
             reset_button['state'] = 'normal'
             boom_button.focus_set()
-            return time_start and V.set("Waiting for bOOm..")
+            display_t_var.set(default_t_text)
+            return time_start and display_d_var.set("Waiting for bOOm..")
 
         def boomer():
             """Actions for the boom button."""
             time_end = perf_counter()
-            execution_time = float("%.2f" % (time_end - time_start))
+            execution_time = (time_end - time_start)
+            display_t_var.set(str(float("%.3f" % execution_time)) + " sec")
             # Calculate speed of sound based on given air temperature.
             temp_celcius = int(temp_input.get())
-            speed_sound_air = float("%.2f" % (331.3 * sqrt(1 +
-                                              (temp_celcius / 273.15))))
+            speed_sound_air = (331.3 * sqrt(1 + (temp_celcius / 273.15)))
             # Distance calculation.
-            distance = int(execution_time * speed_sound_air)
+            distance = round(execution_time * speed_sound_air)
             boom_button['state'] = 'disabled'
             flash_button.focus_set()
             # Add distance to history box.
             historyBoxer(distance)
             history_var.set(history_list)
-            return V.set("± " + str(distance) + " metres")
+            return display_d_var.set("± " + str(distance) + " metres")
 
         def resetter():
             """Actions for the reset button."""
@@ -72,7 +75,8 @@ class App(Frame):
             del history_list[:]
             del hist_compare_list[:]
             history_var.set(history_list)
-            return V.set(default_text)
+            display_t_var.set(default_t_text)
+            return display_d_var.set(default_d_text)
 
         def spacer(s, totalspace=14):
             """Fake TABs.
@@ -89,7 +93,7 @@ class App(Frame):
             if history_list != []:
                 a = hist_compare_list[0]
                 hist_compare_list.insert(0, x)
-                # Keep compare list small, only latest two values needed.
+                # Keep compare list small, only most recent two values needed.
                 if len(hist_compare_list) > 2:
                     hist_compare_list.pop(2)
                 else:
@@ -249,17 +253,29 @@ class App(Frame):
             sticky=E
             )
 
-        # Feedback/display label.
-        feedback = ttk.Label(
+        # Display distance label.
+        display_d = ttk.Label(
             frame_one,
             text="Feedback..",
-            textvariable=V,
-            font=Font(weight='bold'),
-            padding='0 12 0 8'
+            textvariable=display_d_var,
+            font="-weight bold",
+            padding='0 12 0 4'
             )
-        feedback.grid(
+        display_d.grid(
             column=0,
             row=2,
+            sticky=S
+            )
+        # Display time label.
+        display_t = ttk.Label(
+            frame_one,
+            text="Feedback..",
+            textvariable=display_t_var,
+            padding='0 4 0 8'
+            )
+        display_t.grid(
+            column=0,
+            row=3,
             sticky=S
             )
 
@@ -267,7 +283,7 @@ class App(Frame):
         history_scroll = ttk.Scrollbar(frame_one)
         history_scroll.grid(
             column=0,
-            row=3,
+            row=4,
             padx=0,
             pady=8,
             sticky=(N, S, E)
@@ -286,7 +302,7 @@ class App(Frame):
             )
         history_box.grid(
             column=0,
-            row=3,
+            row=4,
             padx=8,
             pady=8,
             sticky=(N, S, W)
@@ -301,5 +317,10 @@ if __name__ == '__main__':
     # Load and assign images, odd it has to be here, but else won't work.
     img_flash = BitmapImage(file="img/flash.xbm", foreground='orange')
     img_boom = BitmapImage(file="img/boom.xbm", foreground='red')
+    # Place window somewhere near the centre on the desktop.
+    screen_width = str(int(root.winfo_screenwidth() / 2 - 100))
+    screen_height = str(int(root.winfo_screenheight() / 2 - 200))
+    desktop = '-' + screen_width + '+' + screen_height
+    root.geometry(desktop)
     app = App(root)
     root.mainloop()

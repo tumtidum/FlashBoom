@@ -52,6 +52,9 @@ though.)
 
 ## Release History
 
+* 0.0.2
+    * Time feedback added.
+    * Some minor adjustments.
 * 0.0.1
     * Work in progress.
 
